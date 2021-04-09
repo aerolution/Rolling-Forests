@@ -133,6 +133,7 @@ function createExplosionParticles() {
   }
   var pMaterial = new THREE.PointsMaterial({
     color: 0x187018,
+    transparent: true,
     opacity: 1,
     size: 0.2,
   });
@@ -152,7 +153,7 @@ function createTreesPool() {
 
 function handleKeyDown(keyEvent) {
   var validMove = true;
-  if ((keyEvent.keyCode === 37 || keyEvent.keyCode === 65)&& !paused) {
+  if ((keyEvent.keyCode === 37 || keyEvent.keyCode === 65) && !paused) {
     if (currentLane == middleLane) {
       currentLane = leftLane;
     } else if (currentLane == rightLane) {
@@ -168,14 +169,47 @@ function handleKeyDown(keyEvent) {
     } else {
       validMove = false;
     }
-  } else if(keyEvent.keyCode === 80 || keyEvent.keyCode === 81) {
-    if(paused) {
+  } else if (keyEvent.keyCode === 80 || keyEvent.keyCode === 81) {
+    if (paused) {
       paused = false;
     } else {
       paused = true;
     }
   } else {
     if ((keyEvent.keyCode === 38  || keyEvent.keyCode === 87 || keyEvent.keyCode === 32) && !jumping && !paused) {  
+      bounceValue = 0.11;
+      jumping = true;
+    }
+    validMove = false;
+  }
+}
+
+function handleSwipe(direction) {
+  var validMove = true;
+  if (direction == 'right' && !paused) {
+    if (currentLane == middleLane) {
+      currentLane = leftLane;
+    } else if (currentLane == rightLane) {
+      currentLane = middleLane;
+    } else {
+      validMove = false;
+    }
+  } else if (direction == 'left' && !paused) {
+    if (currentLane == middleLane) {
+      currentLane = rightLane;
+    } else if (currentLane == leftLane) {
+      currentLane = middleLane;
+    } else {
+      validMove = false;
+    }
+  } else if (direction == 'down') {
+    if (paused) {
+      paused = false;
+    } else {
+      paused = true;
+    }
+  } else {
+    if (direction == 'up' && !jumping && !paused) {  
       bounceValue = 0.11;
       jumping = true;
     }
@@ -402,7 +436,7 @@ function tightenTree(vertices, sides, currentTier) {
 }
 
 function update() {
-  if(!paused) {
+  if (!paused) {
     rollingGroundSphere.rotation.x += rollingSpeed;
     ball.rotation.x -= ballRollingSpeed;
     if (ball.position.y <= heroBaseY) {
@@ -443,7 +477,7 @@ function doTreeLogic() {
       treesToRemove.push(oneTree);
     } else {
       if (treePos.distanceTo(ball.position) <= 0.6) {
-        if(score > highScore) {
+        if (score > highScore) {
           highText.innerHTML = `High Score: ${score.toString()}`
           highScore = score;
         }
@@ -463,12 +497,16 @@ function doTreeLogic() {
 }
 
 function doExplosionLogic() {
-  if (!explodeParticles.visible) return;
+  if (!explodeParticles.visible) {
+    explodeParticles.material.opacity = 1;
+    return;
+  }
   for (var i = 0; i < particleCount; i++) {
     explodeParticleGeometry.vertices[i].multiplyScalar(explosionPower);
   }
   if (explosionPower > 1.005) {
     explosionPower -= 0.001;
+    explodeParticles.material.opacity -= 0.025;
   } else {
     explodeParticles.visible = false;
   }
@@ -491,13 +529,13 @@ function explode() {
 }
 
 function doDifficultyLogic() {
-  if(score === 0) {
+  if (score === 0) {
     rollingSpeed = 0.008;
   } else if (rollingSpeed < 0.0095) {
     rollingSpeed += 0.00001
   }
   
-  if(score === 0) {
+  if (score === 0) {
     treeReleaseInterval = 0.5;
   } else if (treeReleaseInterval > 0.2) {
     treeReleaseInterval -= Math.log(score) / 1000
@@ -516,3 +554,50 @@ function onWindowResize() {
   camera.aspect = sceneWidth / sceneHeight;
   camera.updateProjectionMatrix();
 }
+
+// https://stackoverflow.com/questions/15084675/how-to-implement-swipe-gestures-for-mobile-devices/58719294#58719294
+function detectSwipe(id, func, deltaMin = 90) {
+  const swipe_det = {
+    sX: 0,
+    sY: 0,
+    eX: 0,
+    eY: 0
+  }
+
+  const directions = Object.freeze({
+    UP: 'up',
+    DOWN: 'down',
+    RIGHT: 'right',
+    LEFT: 'left'
+  })
+  let direction = null
+  const el = document.getElementById(id)
+  el.addEventListener('touchstart', function(e) {
+    const t = e.touches[0]
+    swipe_det.sX = t.screenX
+    swipe_det.sY = t.screenY
+  }, false)
+  el.addEventListener('touchmove', function(e) {
+    // e.preventDefault();
+    const t = e.touches[0]
+    swipe_det.eX = t.screenX
+    swipe_det.eY = t.screenY
+  }, false)
+  el.addEventListener('touchend', function(e) {
+    const deltaX = swipe_det.eX - swipe_det.sX
+    const deltaY = swipe_det.eY - swipe_det.sY
+
+    if (deltaX ** 2 + deltaY ** 2 < deltaMin ** 2) return
+
+    if (deltaY === 0 || Math.abs(deltaX / deltaY) > 1)
+      direction = deltaX > 0 ? directions.LEFT : directions.RIGHT
+    else
+      direction = deltaY > 0 ? directions.DOWN : directions.UP
+
+    if (direction && typeof func === 'function') func(el, direction)
+
+    direction = null
+  }, false)
+}
+
+detectSwipe('body', (el, dir) => handleSwipe(dir));
