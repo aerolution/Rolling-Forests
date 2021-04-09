@@ -152,7 +152,7 @@ function createTreesPool() {
 
 function handleKeyDown(keyEvent) {
   var validMove = true;
-  if (keyEvent.keyCode === 37 && !paused) {
+  if ((keyEvent.keyCode === 37 || keyEvent.keyCode === 65)&& !paused) {
     if (currentLane == middleLane) {
       currentLane = leftLane;
     } else if (currentLane == rightLane) {
@@ -160,7 +160,7 @@ function handleKeyDown(keyEvent) {
     } else {
       validMove = false;
     }
-  } else if (keyEvent.keyCode === 39 && !paused) {
+  } else if ((keyEvent.keyCode === 39 || keyEvent.keyCode === 68) && !paused) {
     if (currentLane == middleLane) {
       currentLane = rightLane;
     } else if (currentLane == leftLane) {
@@ -168,14 +168,14 @@ function handleKeyDown(keyEvent) {
     } else {
       validMove = false;
     }
-  } else if(keyEvent.keyCode === 80) {
+  } else if(keyEvent.keyCode === 80 || keyEvent.keyCode === 81) {
     if(paused) {
       paused = false;
     } else {
       paused = true;
     }
   } else {
-    if (keyEvent.keyCode === 38 && !jumping && !paused) {  
+    if ((keyEvent.keyCode === 38  || keyEvent.keyCode === 87 || keyEvent.keyCode === 32) && !jumping && !paused) {  
       bounceValue = 0.11;
       jumping = true;
     }
@@ -493,7 +493,7 @@ function explode() {
 function doDifficultyLogic() {
   if(score === 0) {
     rollingSpeed = 0.008;
-  } else if (rollingSpeed < 0.0125) {
+  } else if (rollingSpeed < 0.0095) {
     rollingSpeed += 0.00001
   }
   
