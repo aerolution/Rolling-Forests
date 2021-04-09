@@ -15,7 +15,7 @@ Just avoid the trees and keep rolling to get new high scores! But watch out, the
 
 | Key | Action |
 | :---: | :---: |
-| **Left Arrow** or **A** | Switch to Left Lane |
-| **Right Arrow** or **D** | Switch to Right Lane |
-| **Up Arrow** or **W** or **Space** | Jump |
-| **P Key** or **Q** | Pause the Game |
+| **Left Arrow/Swipe** or **A** | Switch to Left Lane |
+| **Right Arrow/Swipe** or **D** | Switch to Right Lane |
+| **Up Arrow/Swipe** or **W** or **Space** | Jump |
+| **P/Q Key** or **Down Swipe** | Pause the Game |
