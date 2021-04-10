@@ -40,6 +40,7 @@ var explosionPower = 1.06;
 var explodeParticles;
 var titleText;
 var scoreText;
+var pausedText;
 var highText;
 var score;
 var highScore;
@@ -94,34 +95,67 @@ function createScene() {
   titleText = document.createElement("div");
   titleText.style.position = "absolute";
   titleText.style.fontFamily = "Dela Gothic One";
-  titleText.style.fontSize = 32 + "px";
   titleText.style.textAlign = "center";
   titleText.innerHTML = "ROLLING FORESTS";
   titleText.style.top = 10 + "px";
   titleText.style.color = "#005000";
-  titleText.style.left = window.innerWidth / 2 - 190 + "px";
+  if(window.innerWidth < 600) {
+    titleText.style.fontSize = 24 + "px";
+    titleText.style.left = window.innerWidth / 2 - 142.5 + "px";
+  } else {
+    titleText.style.fontSize = 32 + "px";
+    titleText.style.left = window.innerWidth / 2 - 190 + "px";
+  }
   document.body.appendChild(titleText);
+
+  pausedText = document.createElement("div");
+  pausedText.style.position = "absolute";
+  pausedText.style.fontFamily = "Dela Gothic One";
+  pausedText.style.fontWeight = "bold";
+  pausedText.style.color = "#000";
+  if(window.innerWidth < 600) {
+    pausedText.style.fontSize = 12 + "px";
+    pausedText.style.top = 45 + "px";
+    pausedText.style.left = 15 + "px";
+  } else {
+    pausedText.style.fontSize = 24 + "px";
+    pausedText.style.top = 50 + "px";
+    pausedText.style.left = 30 + "px";
+  }
+  document.body.appendChild(pausedText);
 
   scoreText = document.createElement("div");
   scoreText.style.position = "absolute";
-  scoreText.style.fontSize = 24 + "px";
   scoreText.style.fontFamily = "Dela Gothic One";
   scoreText.style.fontWeight = "bold";
   scoreText.style.color = "#000";
   scoreText.innerHTML = "Score: 0";
-  scoreText.style.top = 50 + "px";
-  scoreText.style.left = 30 + "px";
+  if(window.innerWidth < 600) {
+    scoreText.style.fontSize = 12 + "px";
+    scoreText.style.top = 65 + "px";
+    scoreText.style.left = 15 + "px";
+  } else {
+    scoreText.style.fontSize = 24 + "px";
+    scoreText.style.top = 80 + "px";
+    scoreText.style.left = 30 + "px";
+  }
   document.body.appendChild(scoreText);
-  
+
   highText = document.createElement("div");
   highText.style.position = "absolute";
-  highText.style.fontSize = 24 + "px";
   highText.style.fontFamily = "Dela Gothic One";
   highText.style.fontWeight = "bold";
   highText.style.color = "#000";
   highText.innerHTML = "High Score: 0";
-  highText.style.top = 80 + "px";
-  highText.style.left = 30 + "px";
+  if(window.innerWidth < 600) {
+    highText.style.fontSize = 12 + "px";
+    highText.style.top = 85 + "px";
+    highText.style.left = 15 + "px";
+  } else {
+    highText.style.fontSize = 24 + "px";
+    highText.style.top = 110 + "px";
+    highText.style.left = 30 + "px";
+  }
   document.body.appendChild(highText);
 }
 
@@ -171,8 +205,10 @@ function handleKeyDown(keyEvent) {
     }
   } else if (keyEvent.keyCode === 80 || keyEvent.keyCode === 81) {
     if (paused) {
+      pausedText.innerHTML = "";
       paused = false;
     } else {
+      pausedText.innerHTML = "Game Paused";
       paused = true;
     }
   } else {
@@ -204,8 +240,10 @@ function handleSwipe(direction) {
     }
   } else if (direction == 'down') {
     if (paused) {
+      pausedText.innerHTML = "";
       paused = false;
     } else {
+      pausedText.innerHTML = "Game Paused";
       paused = true;
     }
   } else {
@@ -550,6 +588,43 @@ function onWindowResize() {
   sceneHeight = window.innerHeight - 20;
   sceneWidth = window.innerWidth - 20;
   titleText.style.left = window.innerWidth / 2 - 190 + "px";
+  if(window.innerWidth < 600) {
+    titleText.style.fontSize = 24 + "px";
+    titleText.style.left = window.innerWidth / 2 - 142.5 + "px";
+  } else {
+    titleText.style.fontSize = 32 + "px";
+    titleText.style.left = window.innerWidth / 2 - 190 + "px";
+  }
+  
+  if(window.innerWidth < 600) {
+    pausedText.style.fontSize = 12 + "px";
+    pausedText.style.top = 45 + "px";
+    pausedText.style.left = 15 + "px";
+  } else {
+    pausedText.style.fontSize = 24 + "px";
+    pausedText.style.top = 50 + "px";
+    pausedText.style.left = 30 + "px";
+  }
+  
+  if(window.innerWidth < 600) {
+    scoreText.style.fontSize = 12 + "px";
+    scoreText.style.top = 65 + "px";
+    scoreText.style.left = 15 + "px";
+  } else {
+    scoreText.style.fontSize = 24 + "px";
+    scoreText.style.top = 80 + "px";
+    scoreText.style.left = 30 + "px";
+  }
+  
+  if(window.innerWidth < 600) {
+    highText.style.fontSize = 12 + "px";
+    highText.style.top = 85 + "px";
+    highText.style.left = 15 + "px";
+  } else {
+    highText.style.fontSize = 24 + "px";
+    highText.style.top = 110 + "px";
+    highText.style.left = 30 + "px";
+  }
   renderer.setSize(sceneWidth, sceneHeight);
   camera.aspect = sceneWidth / sceneHeight;
   camera.updateProjectionMatrix();
